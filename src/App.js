@@ -1,5 +1,5 @@
 import './App.css';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import {Button, Container, FormGroup, List, ListItemButton, ListItemText, TextField, Typography, ThemeProvider, createTheme } from '@mui/material';
 import CssBaseline from '@mui/material/CssBaseline';
 
@@ -14,8 +14,13 @@ class Task {
 
 
 function App() {
-  const [tasks, setTasks] = useState(Array(0));
+  // task list persists between sessions
+  const [tasks, setTasks] = useState(JSON.parse(localStorage.getItem('tasks')));
   const [newTask, setNewTask] = useState("");
+
+  useEffect(() => {
+    localStorage.setItem('tasks', JSON.stringify(tasks));
+  }, [tasks]);
 
   const handleClick = () => {
     if(newTask !== "") {
