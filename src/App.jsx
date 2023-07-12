@@ -14,20 +14,28 @@ class Task {
 
 
 function App() {
-  // task list persists between sessions
-  const [tasks, setTasks] = useState(JSON.parse(localStorage.getItem('tasks')));
+  // task list and contents of entry field
+  const [tasks, setTasks] = useState([]);
   const [newTask, setNewTask] = useState("");
 
+  /**
+   * on first render, see if there are stored tasks, and load them
+   */
+  useEffect(() => {
+    const storedTasks = JSON.parse(localStorage.getItem('tasks'));
+    console.log(storedTasks)
+    
+    if(storedTasks) {
+      setTasks(storedTasks);
+    }
+  }, []);
+
+  /**
+   * update stored state
+   */
   useEffect(() => {
     localStorage.setItem('tasks', JSON.stringify(tasks));
   }, [tasks]);
-
-  const handleClick = () => {
-    if(newTask !== "") {
-      setTasks(tasks.concat([new Task(newTask)])); 
-      setNewTask("")
-    }
-  }
 
   const darkTheme = createTheme({
     palette: {
@@ -43,7 +51,12 @@ function App() {
 
         <FormGroup id="entry">
           <TextField autoComplete={false} label="Task" value={newTask} onChange={(event) => setNewTask(event.target.value)}/> 
-          <Button type="submit" variant="contained" onClick={handleClick}>
+          <Button type="submit" variant="contained" onClick={() => {
+            if(newTask !== "") {
+              setTasks(tasks.concat([new Task(newTask)])); 
+               setNewTask("");}
+            }
+          }>
             Add
           </Button>
         </FormGroup>
